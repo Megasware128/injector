@@ -724,7 +724,11 @@ inline bool game_version_manager::Detect()
         case 0xD3C3DB:  // GTA SA 3.0 (Encrypted Steam Version)
             game = 'S', major = 3, minor = 0, region = 0, steam = true;
             return true;
-
+            
+        case 0x858EA8: // GTA SA Steam (Latest)
+            game = 'S', major = 3, minor = 0, majorRevision = 1, minorRevision = 0, region = 0, steam = true;
+            return true;
+            
         case 0xC965AD:  // GTA IV 1.0.0.4 US
             game = 'I', major = 1, minor = 0, majorRevision = 0, minorRevision = 4, region = 'U', steam = false;
             return true;
