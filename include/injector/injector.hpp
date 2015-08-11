@@ -725,8 +725,8 @@ inline bool game_version_manager::Detect()
             game = 'S', major = 3, minor = 0, region = 0, steam = true;
             return true;
             
-        case 0x858EA8: // GTA SA Steam (Latest)
-            game = 'S', major = 3, minor = 0, majorRevision = 1, minorRevision = 0, region = 0, steam = true;
+        case 0x858EA8: // GTA SA latest Steam
+            game = 'S', major = 3, minor = 1, region = 0, steam = true;
             return true;
             
         case 0xC965AD:  // GTA IV 1.0.0.4 US
