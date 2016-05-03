@@ -6,19 +6,19 @@
  *  This software is provided 'as-is', without any express or implied
  *  warranty. In no event will the authors be held liable for any damages
  *  arising from the use of this software.
- * 
+ *
  *  Permission is granted to anyone to use this software for any purpose,
  *  including commercial applications, and to alter it and redistribute it
  *  freely, subject to the following restrictions:
- * 
+ *
  *     1. The origin of this software must not be misrepresented; you must not
  *     claim that you wrote the original software. If you use this software
  *     in a product, an acknowledgment in the product documentation would be
  *     appreciated but is not required.
- * 
+ *
  *     2. Altered source versions must be plainly marked as such, and must not be
  *     misrepresented as being the original software.
- * 
+ *
  *     3. This notice may not be removed or altered from any source
  *     distribution.
  *
@@ -32,20 +32,20 @@ namespace injector
 {
 
 #if 1       // GVM and Address Translator, Not very interesting for the users, so skip reading those...
-    
+
 /*
  *  game_version_manager
  *      Detects the game, the game version and the game region
  *      This assumes the executable is decrypted, so, Silent's ASI Loader is recommended.
  */
-#ifndef INJECTOR_OWN_GVM 
+#ifndef INJECTOR_OWN_GVM
 #ifndef INJECTOR_GVM_DUMMY
 class game_version_manager
 {
     public:
         // Set this if you would like that MessagesBox contain PluginName as caption
         const char* PluginName;
-        
+
     private:
         char game, region, major, minor, majorRevision, minorRevision, cracker, steam;
 
@@ -57,17 +57,17 @@ class game_version_manager
             #else
                 PluginName = "Unknown Plugin Name";
             #endif
-            
+
             this->Clear();
         }
-        
+
 
         // Clear any information about game version
         void Clear()
         {
             game = region = major = minor = majorRevision = minorRevision = cracker = steam = 0;
         }
-        
+
         // Checks if I don't know the game we are attached to
         bool IsUnknown()		{ return game == 0; }
         // Checks if this is the steam version
@@ -81,9 +81,9 @@ class game_version_manager
         int GetMinorVersion()	{ return minor; }
         int GetMajorRevisionVersion()	{ return majorRevision; }
         int GetMinorRevisionVersion()	{ return minorRevision; }
-        
+
         bool IsHoodlum()        { return cracker == 'H'; }
-        
+
         // Region conditions
         bool IsUS() { return region == 'U'; }
         bool IsEU() { return region == 'E'; }
@@ -97,20 +97,20 @@ class game_version_manager
 
         // Detects game, region and version; returns false if could not detect it
         bool Detect();
-        
+
         // Gets the game version as text, the buffer must contain at least 32 bytes of space.
         char* GetVersionText(char* buffer)
         {
             if(this->IsUnknown())
             {
-                strcpy(buffer, "UNKNOWN GAME");
+                strcpy_s(buffer, 32, "UNKNOWN GAME");
                 return buffer;
             }
 
             const char* g = this->IsIII() ? "III" : this->IsVC() ? "VC" : this->IsSA() ? "SA" : this->IsIV() ? "IV" : this->IsEFLC() ? "EFLC" : "UNK";
             const char* r = this->IsUS()? "US" : this->IsEU()? "EURO" : "UNK_REGION";
             const char* s = this->IsSteam()? "Steam" : "";
-            sprintf(buffer, "GTA %s %d.%d.%d.%d %s%s", g, major, minor, majorRevision, minorRevision, r, s);
+            sprintf_s(buffer, 32, "GTA %s %d.%d.%d.%d %s%s", g, major, minor, majorRevision, minorRevision, r, s);
             return buffer;
         }
 
@@ -129,7 +129,7 @@ class game_version_manager
         void RaiseIncompatibleVersion()
         {
             char buf[128], v[32];
-            sprintf(buf,
+            sprintf_s(buf,
                 "An incompatible exe version has been detected! (%s)\nContact the mod creator!",
                 GetVersionText(v)
                 );
@@ -158,7 +158,7 @@ class address_manager : public game_version_manager
         {
             this->Detect();
         }
-        
+
         // You could implement your translator for the address your plugin uses
         // If not implemented, the translator won't translate anything, just return the samething as before
         #ifdef INJECTOR_GVM_HAS_TRANSLATOR
@@ -173,8 +173,8 @@ class address_manager : public game_version_manager
         {
             return translator(p);
         }
-        
-        
+
+
     public:
         // Address manager singleton
         static address_manager& singleton()
@@ -182,19 +182,19 @@ class address_manager : public game_version_manager
             static address_manager m;
             return m;
         }
-        
+
         // Static version of translate()
         static void* translate_address(void* p)
         {
             return singleton().translate(p);
         }
-        
+
         //
         static void set_name(const char* modname)
         {
             singleton().PluginName = modname;
         }
-        
+
     public:
         // Functors for memory translation:
 
@@ -214,7 +214,7 @@ class address_manager : public game_version_manager
             void* operator()(void* p) const
             { return p; }
         };
-        
+
         // Real translator
         struct fn_mem_translator
         {
